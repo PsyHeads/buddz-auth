@@ -59,7 +59,7 @@ public class SignupController {
 		return "Hello Auth!";
 	}
 	
-	@GetMapping(path="/login")
+	//@GetMapping(path="/login")
 	public String getLogin() {
 		return "Please login to access the system!";
 	}

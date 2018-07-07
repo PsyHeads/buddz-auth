@@ -22,19 +22,4 @@ public class AppConfig {
 	        .build();
 	}
 	
-	@Bean
-	public UserDetailsManager userDetailsManager() {
-		
-		JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-		jdbcUserDetailsManager.setDataSource(dataSource());
-		return jdbcUserDetailsManager; 
-	}
-	
-	@Bean
-	public GroupManager groupManager() {
-		
-		JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-		jdbcUserDetailsManager.setDataSource(dataSource());
-		return jdbcUserDetailsManager; 
-	}
 }
