@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
@@ -33,8 +34,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private DataSource dataSource;
 	
-	//@Autowired
-	//private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	@Qualifier("authenticationManagerBean")
@@ -43,7 +44,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	 @Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		// TODO Auto-generated method stub
-		super.configure(clients);
+		//super.configure(clients);
 		
 		clients.jdbc(dataSource);
 	}
@@ -53,6 +54,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         oauthServer
           .tokenKeyAccess("permitAll()")
           .checkTokenAccess("isAuthenticated()");
+        
+        //oauthServer.sslOnly();
 	}
 	
 	@Override
@@ -65,30 +68,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	     return new JdbcTokenStore(dataSource);
 	}
 	
-//	@Bean
-//    public PasswordEncoder passwordEncoder() {
-//		
-//		 //PasswordEncoder defaultEncoder = new StandardPasswordEncoder();
-//		    Map<String, PasswordEncoder> encoders = new HashMap<>();
-//		    encoders.put("bcrypt", new BCryptPasswordEncoder());
-//		 
-//		 
-//		    DelegatingPasswordEncoder passworEncoder = new DelegatingPasswordEncoder(
-//		      "bcrypt", encoders);
-//		    //passworEncoder.setDefaultPasswordEncoderForMatches(defaultEncoder);
-//	    return passworEncoder;
-//        //return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
-
-	@Bean
-	public static NoOpPasswordEncoder passwordEncoder() {
-		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
-	}
-	
-
 	
 //	@Bean
-//	public static BCryptPasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
+//	public static NoOpPasswordEncoder passwordEncoder() {
+//		return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
 //	}
 }

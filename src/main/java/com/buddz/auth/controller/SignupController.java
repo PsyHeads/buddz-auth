@@ -1,13 +1,11 @@
 package com.buddz.auth.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,7 +63,7 @@ public class SignupController {
 	}
 	
 	@PostMapping(path="/signup")
-	public String signup(@RequestBody BuddzUser buddzUser) {
+	public SignupResponse SignupResponse(@RequestBody BuddzUser buddzUser) {
 						
 		String username = buddzUser.getUsername();
 		
@@ -78,18 +76,24 @@ public class SignupController {
 
 	        // prepend the encoding algorithm id
 	        encodedPassword = "{bcrypt}" + encodedPassword;
-	                 
+	        
+	        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_USER");
+	        
 	        // create user object (from Spring Security framework)
-	        User tempUser = new User(username, encodedPassword, new ArrayList<>());
+	        User tempUser = new User(username, encodedPassword, authorities);
 	        
 	        // save user in the database
 	        userDetailsManager.createUser(tempUser);
 	        groupManager.addUserToGroup(username, "ALL");		
-		}
 		
-		BuddzUser savedUser = buddzUserRepository.save(buddzUser);
-        logger.info("Successfully created user: " + username);
-        return savedUser.getId().toString();
+			BuddzUser savedUser = buddzUserRepository.save(buddzUser);
+	        logger.info("Successfully created user: " + username);
+	        return new SignupResponse("success", username, savedUser.getId());
+		} else {
+			//TODO: HTTP resposne code needs to be fixed.
+			return new SignupResponse("failed", username, "User already exists.");
+		}
+		 
 	}
 	
 	private boolean doesUserExist(String userName) {
@@ -103,5 +107,59 @@ public class SignupController {
 		
 		return exists;
 	}
-
 }
+
+class SignupResponse {
+	
+	private String status;
+	private String username;
+	private long id;
+	private String message;
+	
+	public SignupResponse(String status, String username, long id) {
+		super();
+		this.status = status;
+		this.username = username;
+		this.id = id;
+	}
+	
+	public SignupResponse(String status, String username, String message) {
+		super();
+		this.status = status;
+		this.username = username;
+		this.message = message;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+}
+
