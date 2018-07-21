@@ -5,9 +5,7 @@ import javax.sql.DataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.provisioning.GroupManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @Configuration
 public class AppConfig {
@@ -22,4 +20,13 @@ public class AppConfig {
 	        .build();
 	}
 	
+	@Bean
+	public CommonsRequestLoggingFilter requestLoggingFilter() {
+	    CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
+	    loggingFilter.setIncludeClientInfo(true);
+	    loggingFilter.setIncludeQueryString(true);
+	    loggingFilter.setIncludePayload(true);
+	    loggingFilter.setIncludeHeaders(true);
+	    return loggingFilter;
+	}
 }
